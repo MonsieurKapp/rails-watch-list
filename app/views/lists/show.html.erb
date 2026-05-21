@@ -1,22 +1,59 @@
-<h1><%= @list.name %></h1>
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+      <p class="text-uppercase text-muted fw-bold mb-2">Watch list</p>
+      <h1 class="display-5 fw-bold mb-0"><%= @list.name %></h1>
+    </div>
 
-<%= link_to "Add a movie", new_list_bookmark_path(@list) %>
+    <%= link_to "＋ Add a movie", new_list_bookmark_path(@list), class: "btn btn-dark rounded-pill px-4 py-2" %>
+  </div>
 
-<ul>
-  <% @list.bookmarks.each do |bookmark| %>
-    <li>
-      <%= bookmark.movie.title %>
-      -
-      <%= bookmark.comment %>
+  <% if @list.bookmarks.any? %>
+    <div class="row g-4">
+      <% @list.bookmarks.each do |bookmark| %>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+            <div style="height: 420px; background-image: url('<%= bookmark.movie.poster_url %>'); background-size: cover; background-position: center;"></div>
 
-      <%= link_to "delete",
-        bookmark_path(bookmark),
-        data: {
-          turbo_method: :delete,
-          turbo_confirm: "Are you sure?"
-        } %>
-    </li>
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                <h5 class="fw-bold mb-0"><%= bookmark.movie.title %></h5>
+                <span class="badge rounded-pill bg-warning text-dark">
+                  ⭐ <%= bookmark.movie.rating %>
+                </span>
+              </div>
+
+              <p class="text-muted small mb-3">
+                <%= bookmark.movie.overview.truncate(120) %>
+              </p>
+
+              <div class="bg-light rounded-4 p-3 mb-3">
+                <p class="mb-0 fst-italic">
+                  “<%= bookmark.comment %>”
+                </p>
+              </div>
+
+              <%= link_to "Delete",
+                bookmark_path(bookmark),
+                class: "btn btn-outline-danger rounded-pill w-100",
+                data: {
+                  turbo_method: :delete,
+                  turbo_confirm: "Are you sure?"
+                } %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center bg-light rounded-4 p-5">
+      <h3 class="fw-bold">No movie yet</h3>
+      <p class="text-muted">Start building your watch list by adding your first movie.</p>
+      <%= link_to "Add your first movie", new_list_bookmark_path(@list), class: "btn btn-dark rounded-pill px-4" %>
+    </div>
   <% end %>
-</ul>
 
-<%= link_to "Back to lists", lists_path %>
+  <div class="mt-5">
+    <%= link_to "← Back to lists", lists_path, class: "text-decoration-none text-dark fw-bold" %>
+  </div>
+</div>
